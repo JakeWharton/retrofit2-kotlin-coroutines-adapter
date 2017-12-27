@@ -7,11 +7,11 @@ A Retrofit 2 `CallAdapter.Factory` for [Kotlin coroutine's][1] `Deferred`.
 Usage
 -----
 
-Add `KotlinCoroutineCallAdapterFactory` as a `Call` adapter when building your `Retrofit` instance:
+Add `CoroutineCallAdapterFactory` as a `Call` adapter when building your `Retrofit` instance:
 ```kotlin
 val retrofit = Retrofit.Builder()
     .baseUrl("https://example.com/")
-    .addCallAdapterFactory(KotlinCoroutineCallAdapter())
+    .addCallAdapterFactory(CoroutineCallAdapterFactory())
     .build()
 ```
 
