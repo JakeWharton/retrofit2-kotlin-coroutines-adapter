@@ -1,0 +1,36 @@
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.10'
+  }
+}
+
+apply plugin: 'java-library'
+apply plugin: 'org.jetbrains.kotlin.jvm'
+apply from: file('gradle/gradle-mvn-push.gradle')
+
+targetCompatibility = JavaVersion.VERSION_1_6
+sourceCompatibility = JavaVersion.VERSION_1_6
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  api 'com.squareup.retrofit2:retrofit:2.3.0'
+  api 'org.jetbrains.kotlin:kotlin-stdlib:1.2.10'
+  api 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.20'
+
+  testImplementation 'junit:junit:4.12'
+  testImplementation 'com.squareup.okhttp3:mockwebserver:3.9.1'
+  testImplementation 'com.google.guava:guava:23.6-jre'
+  testImplementation 'com.google.truth:truth:0.37'
+}
+
+kotlin {
+  experimental {
+    coroutines 'enable'
+  }
+}

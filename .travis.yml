@@ -1,0 +1,19 @@
+language: java
+
+jdk:
+  - oraclejdk8
+
+script: ./gradlew build
+
+after_success:
+  - .buildscript/deploy_snapshot.sh
+
+env:
+  global:
+    - secure: "ESbreW4FNMPQhV1zbFb9iBvhFWFbVHecaig3Si3+4nrJCMn9x4nqB18ZcU+Aviw67WQNcuSH4I0Hl08uknl+kzE/xKEfPLmu28bptXRCSued49aL11i2aQmRj5nqP2yxkinhtRGOQxzIo56NmFt7sIcEXODM3D5a6q7s9tlvPfw="
+    - secure: "JWEeqx0CWBqAkjcREHUg3Ei8wxqp59HZag8EidSLwmekgPJQwipwuEeXMZyPCGJCP+4ijUirtS/hRApi37BW0LYdt+XR7dI1TSZ0HFLTLqSPfWfsUcjmGpmoqVUv8FLVhC+KA42YeEhqkEaCUW92gJeAyK8swxDqGHAPT/sfKRA="
+
+notifications:
+  email: false
+
+sudo: false
