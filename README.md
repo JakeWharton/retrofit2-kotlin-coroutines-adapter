@@ -37,12 +37,12 @@ Download [the latest JAR][2] or grab via [Maven][3]:
 <dependency>
   <groupId>com.jakewharton.retrofit</groupId>
   <artifactId>retrofit2-kotlin-coroutines-experimental-adapter</artifactId>
-  <version>latest.version</version>
+  <version>1.0.0</version>
 </dependency>
 ```
 or [Gradle][3]:
 ```groovy
-compile 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-experimental-adapter:latest.version'
+compile 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-experimental-adapter:1.0.0'
 ```
 
 Snapshots of the development version are available in [Sonatype's `snapshots` repository][snap].
@@ -69,6 +69,6 @@ License
 
 
  [1]: https://kotlinlang.org/docs/reference/coroutines.html
- [2]: https://search.maven.org/remote_content?g=com.squareup.retrofit2&a=adapter-kotlin-coroutines-experimental&v=LATEST
- [3]: http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.squareup.retrofit2%22%20a%3A%22adapter-kotlin-coroutines-experimental%22
+ [2]: https://search.maven.org/remote_content?g=com.jakewharton.retrofit&a=retrofit2-kotlin-coroutines-experimental-adapter&v=LATEST
+ [3]: http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.jakewharton.retrofit%22%20a%3A%22retrofit2-kotlin-coroutines-experimental-adapter%22
  [snap]: https://oss.sonatype.org/content/repositories/snapshots/
