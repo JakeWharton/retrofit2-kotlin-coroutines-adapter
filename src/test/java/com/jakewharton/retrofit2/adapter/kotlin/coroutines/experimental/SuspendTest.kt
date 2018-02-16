@@ -1,0 +1,105 @@
+/*
+ * Copyright (C) 2016 Square, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.jakewharton.retrofit2.adapter.kotlin.coroutines.experimental
+
+import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.experimental.runBlocking
+import okhttp3.mockwebserver.MockResponse
+import okhttp3.mockwebserver.MockWebServer
+import okhttp3.mockwebserver.SocketPolicy.DISCONNECT_AFTER_REQUEST
+import org.junit.Assert.fail
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+import retrofit2.HttpException
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.http.GET
+import java.io.IOException
+
+class SuspendTest {
+  @get:Rule val server = MockWebServer()
+
+  private lateinit var service: Service
+
+  interface Service {
+    @GET("/") suspend fun body(): String
+    @GET("/") suspend fun response(): Response<String>
+  }
+
+  @Before fun setUp() {
+    val retrofit = Retrofit.Builder()
+        .baseUrl(server.url("/"))
+        .addConverterFactory(StringConverterFactory())
+        .addCallbackAdapterFactory(CoroutineCallbackAdapterFactory())
+        .build()
+    service = retrofit.create(Service::class.java)
+  }
+
+  @Test fun bodySuccess200() = runBlocking {
+    server.enqueue(MockResponse().setBody("Hi"))
+
+    val response = service.body()
+    assertThat(response).isEqualTo("Hi")
+  }
+
+  @Test fun bodySuccess404() = runBlocking {
+    server.enqueue(MockResponse().setResponseCode(404))
+
+    try {
+      service.body()
+      fail()
+    } catch (e: HttpException) {
+      assertThat(e).hasMessageThat().isEqualTo("HTTP 404 Client Error")
+    }
+  }
+
+  @Test fun bodyFailure() = runBlocking {
+    server.enqueue(MockResponse().setSocketPolicy(DISCONNECT_AFTER_REQUEST))
+
+    try {
+      service.body()
+      fail()
+    } catch (e: IOException) {
+    }
+  }
+
+  @Test fun responseSuccess200() = runBlocking {
+    server.enqueue(MockResponse().setBody("Hi"))
+
+    val response = service.response()
+    assertThat(response.isSuccessful).isTrue()
+    assertThat(response.body()).isEqualTo("Hi")
+  }
+
+  @Test fun responseSuccess404() = runBlocking {
+    server.enqueue(MockResponse().setResponseCode(404).setBody("Hi"))
+
+    val response = service.response()
+    assertThat(response.isSuccessful).isFalse()
+    assertThat(response.errorBody()!!.string()).isEqualTo("Hi")
+  }
+
+  @Test fun responseFailure() = runBlocking {
+    server.enqueue(MockResponse().setSocketPolicy(DISCONNECT_AFTER_REQUEST))
+
+    try {
+      service.response()
+      fail()
+    } catch (e: IOException) {
+    }
+  }
+}

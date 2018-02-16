@@ -16,10 +16,11 @@ sourceCompatibility = JavaVersion.VERSION_1_6
 
 repositories {
   mavenCentral()
+  mavenLocal()
 }
 
 dependencies {
-  api 'com.squareup.retrofit2:retrofit:2.3.0'
+  api 'com.squareup.retrofit2:retrofit:2.4.0-SNAPSHOT'
   api 'org.jetbrains.kotlin:kotlin-stdlib:1.2.10'
   api 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.20'
 
