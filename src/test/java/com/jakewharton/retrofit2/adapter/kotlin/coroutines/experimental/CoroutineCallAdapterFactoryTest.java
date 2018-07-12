@@ -19,6 +19,8 @@ import com.google.common.reflect.TypeToken;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.List;
+
+import kotlin.Unit;
 import kotlinx.coroutines.experimental.Deferred;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.Before;
@@ -57,6 +59,9 @@ public final class CoroutineCallAdapterFactoryTest {
     Type bodyGeneric = new TypeToken<Deferred<List<String>>>() {}.getType();
     assertThat(factory.get(bodyGeneric, NO_ANNOTATIONS, retrofit).responseType())
         .isEqualTo(new TypeToken<List<String>>() {}.getType());
+    Type bodyUnit = new TypeToken<Deferred<Unit>>() {}.getType();
+    assertThat(factory.get(bodyUnit, NO_ANNOTATIONS, retrofit).responseType())
+         .isEqualTo(Unit.class);
     Type responseClass = new TypeToken<Deferred<Response<String>>>() {}.getType();
     assertThat(factory.get(responseClass, NO_ANNOTATIONS, retrofit).responseType())
         .isEqualTo(String.class);
