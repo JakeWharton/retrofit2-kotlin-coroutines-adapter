@@ -72,6 +72,8 @@ class CoroutineCallAdapterFactory private constructor() : CallAdapter.Factory() 
             "Response must be parameterized as Response<Foo> or Response<out Foo>")
       }
       ResponseCallAdapter<Any>(getParameterUpperBound(0, responseType))
+    } else if (rawDeferredType == Unit::class.java) {
+      EmptyBodyCallAdapter
     } else {
       BodyCallAdapter<Any>(responseType)
     }
@@ -100,6 +102,37 @@ class CoroutineCallAdapterFactory private constructor() : CallAdapter.Factory() 
         override fun onResponse(call: Call<T>, response: Response<T>) {
           if (response.isSuccessful) {
             deferred.complete(response.body()!!)
+          } else {
+            deferred.completeExceptionally(HttpException(response))
+          }
+        }
+      })
+
+      return deferred
+    }
+  }
+
+  private object EmptyBodyCallAdapter : CallAdapter<Any, Deferred<Unit>> {
+
+    override fun responseType() = Unit::class.java
+
+    override fun adapt(call: Call<Any>): Deferred<Unit> {
+      val deferred = CompletableDeferred<Unit>()
+
+      deferred.invokeOnCompletion {
+        if (deferred.isCancelled) {
+          call.cancel()
+        }
+      }
+
+      call.enqueue(object : Callback<Any> {
+        override fun onFailure(call: Call<Any>, t: Throwable) {
+          deferred.completeExceptionally(t)
+        }
+
+        override fun onResponse(call: Call<Any>, response: Response<Any>) {
+          if (response.isSuccessful) {
+            deferred.complete(Unit)
           } else {
             deferred.completeExceptionally(HttpException(response))
           }

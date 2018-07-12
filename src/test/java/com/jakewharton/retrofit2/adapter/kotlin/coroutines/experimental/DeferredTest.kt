@@ -38,6 +38,7 @@ class DeferredTest {
 
   interface Service {
     @GET("/") fun body(): Deferred<String>
+    @GET("/") fun emptyBody(): Deferred<Unit>
     @GET("/") fun response(): Deferred<Response<String>>
   }
 
@@ -73,6 +74,36 @@ class DeferredTest {
     server.enqueue(MockResponse().setSocketPolicy(DISCONNECT_AFTER_REQUEST))
 
     val deferred = service.body()
+    try {
+      deferred.await()
+      fail()
+    } catch (e: IOException) {
+    }
+  }
+
+  @Test fun emptyBodySuccess200() = runBlocking {
+    server.enqueue(MockResponse())
+
+    val deferred = service.emptyBody()
+    assertThat(deferred.await()).isEqualTo(Unit)
+  }
+
+  @Test fun emptyBodySuccess404() = runBlocking {
+    server.enqueue(MockResponse().setResponseCode(404))
+
+    val deferred = service.emptyBody()
+    try {
+      deferred.await()
+      fail()
+    } catch (e: HttpException) {
+      assertThat(e).hasMessageThat().isEqualTo("HTTP 404 Client Error")
+    }
+  }
+
+  @Test fun emptyBodyFailure() = runBlocking {
+    server.enqueue(MockResponse().setSocketPolicy(DISCONNECT_AFTER_REQUEST))
+
+    val deferred = service.emptyBody()
     try {
       deferred.await()
       fail()
