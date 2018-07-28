@@ -1,9 +1,9 @@
 @file:Suppress("UNCHECKED_CAST")
 
-package com.jakewharton.retrofit2.adapter.kotlin.coroutines.experimental
+package com.jakewharton.retrofit2.adapter.kotlin.coroutines
 
 import com.google.common.reflect.TypeToken
-import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.Deferred
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test

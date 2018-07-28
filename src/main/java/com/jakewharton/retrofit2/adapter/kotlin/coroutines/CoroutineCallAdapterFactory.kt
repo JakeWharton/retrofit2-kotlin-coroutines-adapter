@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jakewharton.retrofit2.adapter.kotlin.coroutines.experimental
+package com.jakewharton.retrofit2.adapter.kotlin.coroutines
 
-import kotlinx.coroutines.experimental.CompletableDeferred
-import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
 import retrofit2.Call
 import retrofit2.CallAdapter
 import retrofit2.Callback
