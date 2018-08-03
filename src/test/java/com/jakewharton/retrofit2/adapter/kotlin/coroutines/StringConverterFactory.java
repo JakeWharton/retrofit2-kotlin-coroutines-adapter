@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jakewharton.retrofit2.adapter.kotlin.coroutines.experimental;
+package com.jakewharton.retrofit2.adapter.kotlin.coroutines;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;

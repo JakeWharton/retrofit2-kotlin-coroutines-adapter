@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jakewharton.retrofit2.adapter.kotlin.coroutines.experimental;
+package com.jakewharton.retrofit2.adapter.kotlin.coroutines;
 
 import com.google.common.reflect.TypeToken;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.List;
-import kotlinx.coroutines.experimental.Deferred;
+import kotlinx.coroutines.Deferred;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.Before;
 import org.junit.Rule;

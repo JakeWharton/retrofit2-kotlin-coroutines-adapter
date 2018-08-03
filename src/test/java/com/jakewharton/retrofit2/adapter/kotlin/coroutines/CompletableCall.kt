@@ -1,4 +1,4 @@
-package com.jakewharton.retrofit2.adapter.kotlin.coroutines.experimental
+package com.jakewharton.retrofit2.adapter.kotlin.coroutines
 
 import okhttp3.Request
 import retrofit2.Call

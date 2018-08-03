@@ -1,9 +1,10 @@
 buildscript {
   repositories {
     mavenCentral()
+    maven { url "http://dl.bintray.com/kotlin/kotlin-eap"}
   }
   dependencies {
-    classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.10'
+    classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.3-M1'
   }
 }
 
@@ -16,12 +17,13 @@ sourceCompatibility = JavaVersion.VERSION_1_6
 
 repositories {
   mavenCentral()
+  maven { url "http://dl.bintray.com/kotlin/kotlin-eap"}
 }
 
 dependencies {
   api 'com.squareup.retrofit2:retrofit:2.3.0'
   api 'org.jetbrains.kotlin:kotlin-stdlib:1.2.10'
-  api 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.20'
+  api 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.24.0-eap13'
 
   testImplementation 'junit:junit:4.12'
   testImplementation 'com.squareup.okhttp3:mockwebserver:3.9.1'
