@@ -1,5 +1,5 @@
-Kotlin Coroutine (Experimental) Adapter
-=======================================
+Kotlin Coroutine Adapter
+========================
 
 A Retrofit 2 `CallAdapter.Factory` for [Kotlin coroutine's][1] `Deferred`.
 
@@ -32,7 +32,21 @@ interface MyService {
 Download
 --------
 
-Download [the latest JAR][2] or grab via [Maven][3]:
+If you are using Kotlin 1.3, download [the latest JAR][2] or grab via [Maven][3]:
+```xml
+<dependency>
+  <groupId>com.jakewharton.retrofit</groupId>
+  <artifactId>retrofit2-kotlin-coroutines-adapter</artifactId>
+  <version>0.9.0</version>
+</dependency>
+```
+or [Gradle][3]:
+```groovy
+compile 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.0'
+```
+
+If you are using Kotlin pre-1.3 and experimental coroutines, download [its latest JAR][4] or grab
+via [Maven][5]:
 ```xml
 <dependency>
   <groupId>com.jakewharton.retrofit</groupId>
@@ -40,7 +54,7 @@ Download [the latest JAR][2] or grab via [Maven][3]:
   <version>1.0.0</version>
 </dependency>
 ```
-or [Gradle][3]:
+or [Gradle][5]:
 ```groovy
 compile 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-experimental-adapter:1.0.0'
 ```
@@ -69,6 +83,8 @@ License
 
 
  [1]: https://kotlinlang.org/docs/reference/coroutines.html
- [2]: https://search.maven.org/remote_content?g=com.jakewharton.retrofit&a=retrofit2-kotlin-coroutines-experimental-adapter&v=LATEST
- [3]: http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.jakewharton.retrofit%22%20a%3A%22retrofit2-kotlin-coroutines-experimental-adapter%22
+ [2]: https://search.maven.org/remote_content?g=com.jakewharton.retrofit&a=retrofit2-kotlin-coroutines-adapter&v=LATEST
+ [3]: http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.jakewharton.retrofit%22%20a%3A%22retrofit2-kotlin-coroutines-adapter%22
+ [4]: https://search.maven.org/remote_content?g=com.jakewharton.retrofit&a=retrofit2-kotlin-coroutines-experimental-adapter&v=LATEST
+ [5]: http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.jakewharton.retrofit%22%20a%3A%22retrofit2-kotlin-coroutines-experimental-adapter%22
  [snap]: https://oss.sonatype.org/content/repositories/snapshots/
