@@ -42,7 +42,7 @@ If you are using Kotlin 1.3, download [the latest JAR][2] or grab via [Maven][3]
 ```
 or [Gradle][3]:
 ```groovy
-compile 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.0'
+implementation 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.0'
 ```
 
 If you are using Kotlin pre-1.3 and experimental coroutines, download [its latest JAR][4] or grab
@@ -56,7 +56,7 @@ via [Maven][5]:
 ```
 or [Gradle][5]:
 ```groovy
-compile 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-experimental-adapter:1.0.0'
+implementation 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-experimental-adapter:1.0.0'
 ```
 
 Snapshots of the development version are available in [Sonatype's `snapshots` repository][snap].
