@@ -37,12 +37,12 @@ If you are using Kotlin 1.3, download [the latest JAR][2] or grab via [Maven][3]
 <dependency>
   <groupId>com.jakewharton.retrofit</groupId>
   <artifactId>retrofit2-kotlin-coroutines-adapter</artifactId>
-  <version>0.9.1</version>
+  <version>0.9.2</version>
 </dependency>
 ```
 or [Gradle][3]:
 ```groovy
-implementation 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.1'
+implementation 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2'
 ```
 
 If you are using Kotlin pre-1.3 and experimental coroutines, download [its latest JAR][4] or grab
