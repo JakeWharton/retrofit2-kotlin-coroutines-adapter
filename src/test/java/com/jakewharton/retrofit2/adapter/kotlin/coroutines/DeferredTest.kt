@@ -33,21 +33,17 @@ import retrofit2.http.GET
 import java.io.IOException
 
 class DeferredTest {
-  @get:Rule
-  val server = MockWebServer()
+  @get:Rule val server = MockWebServer()
 
   private lateinit var service: Service
 
   interface Service {
-    @GET("/")
-    fun body(): Deferred<String>
+    @GET("/") fun body(): Deferred<String>
 
-    @GET("/")
-    fun response(): Deferred<Response<String>>
+    @GET("/") fun response(): Deferred<Response<String>>
   }
 
-  @Before
-  fun setUp() {
+  @Before fun setUp() {
     val retrofit = Retrofit.Builder()
         .baseUrl(server.url("/"))
         .addConverterFactory(StringConverterFactory())
@@ -56,16 +52,14 @@ class DeferredTest {
     service = retrofit.create(Service::class.java)
   }
 
-  @Test
-  fun bodySuccess200() = runBlocking {
+  @Test fun bodySuccess200() = runBlocking {
     server.enqueue(MockResponse().setBody("Hi"))
 
     val deferred = service.body()
     assertThat(deferred.await()).isEqualTo("Hi")
   }
 
-  @Test
-  fun bodySuccess404() = runBlocking {
+  @Test fun bodySuccess404() = runBlocking {
     server.enqueue(MockResponse().setResponseCode(404))
 
     val currentFrame = Exception().stackTrace[0]
@@ -81,8 +75,7 @@ class DeferredTest {
     }
   }
 
-  @Test
-  fun bodyFailure() = runBlocking {
+  @Test fun bodyFailure() = runBlocking {
     server.enqueue(MockResponse().setSocketPolicy(DISCONNECT_AFTER_REQUEST))
 
     val currentFrame = Exception().stackTrace[0]
@@ -96,8 +89,7 @@ class DeferredTest {
     }
   }
 
-  @Test
-  fun responseSuccess200() = runBlocking {
+  @Test fun responseSuccess200() = runBlocking {
     server.enqueue(MockResponse().setBody("Hi"))
 
     val deferred = service.response()
@@ -106,8 +98,7 @@ class DeferredTest {
     assertThat(response.body()).isEqualTo("Hi")
   }
 
-  @Test
-  fun responseSuccess404() = runBlocking {
+  @Test fun responseSuccess404() = runBlocking {
     server.enqueue(MockResponse().setResponseCode(404).setBody("Hi"))
 
     val deferred = service.response()
