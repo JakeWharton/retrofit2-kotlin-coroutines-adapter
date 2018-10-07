@@ -106,8 +106,7 @@ class DeferredTest {
     assertThat(response.errorBody()!!.string()).isEqualTo("Hi")
   }
 
-  @Test
-  fun responseFailure() = runBlocking {
+  @Test fun responseFailure() = runBlocking {
     server.enqueue(MockResponse().setSocketPolicy(DISCONNECT_AFTER_REQUEST))
 
     val currentFrame = Exception().stackTrace[0]
