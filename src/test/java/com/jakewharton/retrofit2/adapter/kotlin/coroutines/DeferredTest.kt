@@ -38,7 +38,8 @@ class DeferredTest {
 
   interface Service {
     @GET("/") fun body(): Deferred<String>
-    @GET("/") fun response(): Deferred<Response<String>>
+    @GET("/") @NullableBody fun nullableBody(): Deferred<String?>
+    @GET("/") fun response(): Deferred<Response<String?>>
   }
 
   @Before fun setUp() {
@@ -55,6 +56,13 @@ class DeferredTest {
 
     val deferred = service.body()
     assertThat(deferred.await()).isEqualTo("Hi")
+  }
+
+  @Test fun bodySuccess204() = runBlocking {
+    server.enqueue(MockResponse().setResponseCode(204))
+
+    val deferred = service.nullableBody()
+    assertThat(deferred.await()).isNull()
   }
 
   @Test fun bodySuccess404() = runBlocking {
