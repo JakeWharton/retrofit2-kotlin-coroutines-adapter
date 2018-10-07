@@ -39,7 +39,6 @@ class DeferredTest {
 
   interface Service {
     @GET("/") fun body(): Deferred<String>
-
     @GET("/") fun response(): Deferred<Response<String>>
   }
 
