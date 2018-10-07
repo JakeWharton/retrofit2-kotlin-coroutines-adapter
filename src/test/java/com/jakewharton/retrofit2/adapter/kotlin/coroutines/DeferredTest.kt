@@ -21,6 +21,7 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.SocketPolicy.DISCONNECT_AFTER_REQUEST
+import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Rule
@@ -32,16 +33,21 @@ import retrofit2.http.GET
 import java.io.IOException
 
 class DeferredTest {
-  @get:Rule val server = MockWebServer()
+  @get:Rule
+  val server = MockWebServer()
 
   private lateinit var service: Service
 
   interface Service {
-    @GET("/") fun body(): Deferred<String>
-    @GET("/") fun response(): Deferred<Response<String>>
+    @GET("/")
+    fun body(): Deferred<String>
+
+    @GET("/")
+    fun response(): Deferred<Response<String>>
   }
 
-  @Before fun setUp() {
+  @Before
+  fun setUp() {
     val retrofit = Retrofit.Builder()
         .baseUrl(server.url("/"))
         .addConverterFactory(StringConverterFactory())
@@ -50,37 +56,48 @@ class DeferredTest {
     service = retrofit.create(Service::class.java)
   }
 
-  @Test fun bodySuccess200() = runBlocking {
+  @Test
+  fun bodySuccess200() = runBlocking {
     server.enqueue(MockResponse().setBody("Hi"))
 
     val deferred = service.body()
     assertThat(deferred.await()).isEqualTo("Hi")
   }
 
-  @Test fun bodySuccess404() = runBlocking {
+  @Test
+  fun bodySuccess404() = runBlocking {
     server.enqueue(MockResponse().setResponseCode(404))
 
+    val currentFrame = Exception().stackTrace[0]
     val deferred = service.body()
     try {
       deferred.await()
       fail()
     } catch (e: HttpException) {
       assertThat(e).hasMessageThat().isEqualTo("HTTP 404 Client Error")
+
+      val rootCauseIsCurrentMethod = e.findRootCause()?.stackTrace?.any { it.equalsExceptLine(currentFrame) } ?: false
+      assertTrue("Root cause needs to be current method", rootCauseIsCurrentMethod)
     }
   }
 
-  @Test fun bodyFailure() = runBlocking {
+  @Test
+  fun bodyFailure() = runBlocking {
     server.enqueue(MockResponse().setSocketPolicy(DISCONNECT_AFTER_REQUEST))
 
+    val currentFrame = Exception().stackTrace[0]
     val deferred = service.body()
     try {
       deferred.await()
       fail()
     } catch (e: IOException) {
+      val rootCauseIsCurrentMethod = e.findRootCause()?.stackTrace?.any { it.equalsExceptLine(currentFrame) } ?: false
+      assertTrue("Root cause needs to be current method", rootCauseIsCurrentMethod)
     }
   }
 
-  @Test fun responseSuccess200() = runBlocking {
+  @Test
+  fun responseSuccess200() = runBlocking {
     server.enqueue(MockResponse().setBody("Hi"))
 
     val deferred = service.response()
@@ -89,7 +106,8 @@ class DeferredTest {
     assertThat(response.body()).isEqualTo("Hi")
   }
 
-  @Test fun responseSuccess404() = runBlocking {
+  @Test
+  fun responseSuccess404() = runBlocking {
     server.enqueue(MockResponse().setResponseCode(404).setBody("Hi"))
 
     val deferred = service.response()
@@ -98,14 +116,21 @@ class DeferredTest {
     assertThat(response.errorBody()!!.string()).isEqualTo("Hi")
   }
 
-  @Test fun responseFailure() = runBlocking {
+  @Test
+  fun responseFailure() = runBlocking {
     server.enqueue(MockResponse().setSocketPolicy(DISCONNECT_AFTER_REQUEST))
 
+    val currentFrame = Exception().stackTrace[0]
     val deferred = service.response()
     try {
       deferred.await()
       fail()
     } catch (e: IOException) {
+      val rootCauseIsCurrentMethod = e.findRootCause()?.stackTrace?.any { it.equalsExceptLine(currentFrame) } ?: false
+      assertTrue("Root cause needs to be current method", rootCauseIsCurrentMethod)
     }
   }
+
+  private fun StackTraceElement.equalsExceptLine(other: StackTraceElement) =
+      other.className == className && other.fileName == fileName && other.methodName == methodName
 }
