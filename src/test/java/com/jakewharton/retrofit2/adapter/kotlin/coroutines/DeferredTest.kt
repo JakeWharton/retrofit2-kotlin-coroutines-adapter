@@ -21,6 +21,7 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.SocketPolicy.DISCONNECT_AFTER_REQUEST
+import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Rule
@@ -60,23 +61,30 @@ class DeferredTest {
   @Test fun bodySuccess404() = runBlocking {
     server.enqueue(MockResponse().setResponseCode(404))
 
+    val currentFrame = Exception().stackTrace[0]
     val deferred = service.body()
     try {
       deferred.await()
       fail()
     } catch (e: HttpException) {
       assertThat(e).hasMessageThat().isEqualTo("HTTP 404 Client Error")
+
+      val rootCauseIsCurrentMethod = e.findRootCause()?.stackTrace?.any { it.equalsExceptLine(currentFrame) } ?: false
+      assertTrue("Root cause needs to be current method", rootCauseIsCurrentMethod)
     }
   }
 
   @Test fun bodyFailure() = runBlocking {
     server.enqueue(MockResponse().setSocketPolicy(DISCONNECT_AFTER_REQUEST))
 
+    val currentFrame = Exception().stackTrace[0]
     val deferred = service.body()
     try {
       deferred.await()
       fail()
     } catch (e: IOException) {
+      val rootCauseIsCurrentMethod = e.findRootCause()?.stackTrace?.any { it.equalsExceptLine(currentFrame) } ?: false
+      assertTrue("Root cause needs to be current method", rootCauseIsCurrentMethod)
     }
   }
 
@@ -101,11 +109,17 @@ class DeferredTest {
   @Test fun responseFailure() = runBlocking {
     server.enqueue(MockResponse().setSocketPolicy(DISCONNECT_AFTER_REQUEST))
 
+    val currentFrame = Exception().stackTrace[0]
     val deferred = service.response()
     try {
       deferred.await()
       fail()
     } catch (e: IOException) {
+      val rootCauseIsCurrentMethod = e.findRootCause()?.stackTrace?.any { it.equalsExceptLine(currentFrame) } ?: false
+      assertTrue("Root cause needs to be current method", rootCauseIsCurrentMethod)
     }
   }
+
+  private fun StackTraceElement.equalsExceptLine(other: StackTraceElement) =
+      other.className == className && other.fileName == fileName && other.methodName == methodName
 }

@@ -92,8 +92,10 @@ class CoroutineCallAdapterFactory private constructor() : CallAdapter.Factory() 
         }
       }
 
+      val exceptionWithCapturedStack = CoroutineCallException()
       call.enqueue(object : Callback<T> {
         override fun onFailure(call: Call<T>, t: Throwable) {
+          (t.findRootCause() ?: t).initCause(exceptionWithCapturedStack)
           deferred.completeExceptionally(t)
         }
 
@@ -101,7 +103,7 @@ class CoroutineCallAdapterFactory private constructor() : CallAdapter.Factory() 
           if (response.isSuccessful) {
             deferred.complete(response.body()!!)
           } else {
-            deferred.completeExceptionally(HttpException(response))
+            deferred.completeExceptionally(HttpException(response).apply { initCause(exceptionWithCapturedStack) })
           }
         }
       })
@@ -125,8 +127,10 @@ class CoroutineCallAdapterFactory private constructor() : CallAdapter.Factory() 
         }
       }
 
+      val exceptionWithCapturedStack = CoroutineCallException()
       call.enqueue(object : Callback<T> {
         override fun onFailure(call: Call<T>, t: Throwable) {
+          (t.findRootCause() ?: t).initCause(exceptionWithCapturedStack)
           deferred.completeExceptionally(t)
         }
 
@@ -138,4 +142,19 @@ class CoroutineCallAdapterFactory private constructor() : CallAdapter.Factory() 
       return deferred
     }
   }
+
 }
+
+internal fun Throwable.findRootCause(): Throwable? {
+  var cause = cause ?: return null
+
+  while (true) {
+    val nextCause = cause.cause
+    when (nextCause) {
+      null, cause -> return cause
+      else -> cause = nextCause
+    }
+  }
+}
+
+private class CoroutineCallException : RuntimeException("Originally called here:")
