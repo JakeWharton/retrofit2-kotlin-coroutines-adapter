@@ -150,4 +150,4 @@ class CoroutineCallAdapterFactory private constructor() : CallAdapter.Factory() 
  * Denotes that the body of an HTTP response may be null.
  * @see CoroutineCallAdapterFactory
  */
-annotation class NullableBody
+@Target(AnnotationTarget.FUNCTION) annotation class NullableBody
