@@ -41,7 +41,7 @@ import java.lang.reflect.Type
  *
  * * Direct body (e.g., `Deferred<User>`) returns the deserialized body for 2XX responses, throws
  * [HttpException] errors for non-2XX responses, and throws [IOException][java.io.IOException] for
- * network errors.
+ * network errors. In case of a nullable body, you need to add the [NullableBody] annotation to the method.
  * * Response wrapped body (e.g., `Deferred<Response<User>>`) returns a [Response] object for all
  * HTTP responses and throws [IOException][java.io.IOException] for network errors
  */
@@ -73,18 +73,19 @@ class CoroutineCallAdapterFactory private constructor() : CallAdapter.Factory() 
       }
       ResponseCallAdapter<Any>(getParameterUpperBound(0, responseType))
     } else {
-      BodyCallAdapter<Any>(responseType)
+      BodyCallAdapter<Any>(responseType, nullableBody = annotations.any { it is NullableBody })
     }
   }
 
   private class BodyCallAdapter<T>(
-      private val responseType: Type
-  ) : CallAdapter<T, Deferred<T>> {
+      private val responseType: Type,
+      private val nullableBody: Boolean
+  ) : CallAdapter<T, Deferred<T?>> {
 
     override fun responseType() = responseType
 
-    override fun adapt(call: Call<T>): Deferred<T> {
-      val deferred = CompletableDeferred<T>()
+    override fun adapt(call: Call<T>): Deferred<T?> {
+      val deferred = CompletableDeferred<T?>()
 
       deferred.invokeOnCompletion {
         if (deferred.isCancelled) {
@@ -99,7 +100,12 @@ class CoroutineCallAdapterFactory private constructor() : CallAdapter.Factory() 
 
         override fun onResponse(call: Call<T>, response: Response<T>) {
           if (response.isSuccessful) {
-            deferred.complete(response.body()!!)
+            val body = if (nullableBody) {
+              response.body()
+            } else {
+              response.body() ?: throw NullPointerException("Body is null, but method not annotated with NullableBody")
+            }
+            deferred.complete(body)
           } else {
             deferred.completeExceptionally(HttpException(response))
           }
@@ -139,3 +145,9 @@ class CoroutineCallAdapterFactory private constructor() : CallAdapter.Factory() 
     }
   }
 }
+
+/**
+ * Denotes that the body of an HTTP response may be null.
+ * @see CoroutineCallAdapterFactory
+ */
+@Target(AnnotationTarget.FUNCTION) annotation class NullableBody
