@@ -21,6 +21,7 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.SocketPolicy.DISCONNECT_AFTER_REQUEST
+import org.junit.Assert.assertNull
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Rule
@@ -39,6 +40,8 @@ class DeferredTest {
   interface Service {
     @GET("/") fun body(): Deferred<String>
     @GET("/") fun response(): Deferred<Response<String>>
+    @GET("/") fun voidBody(): Deferred<Void>
+    @GET("/") fun voidResponse(): Deferred<Response<Void>>
   }
 
   @Before fun setUp() {
@@ -80,6 +83,34 @@ class DeferredTest {
     }
   }
 
+  @Test fun voidBodySuccess200() = runBlocking {
+    server.enqueue(MockResponse())
+
+    service.voidBody().await()
+    Unit
+  }
+
+  @Test fun voidBodySuccess404() = runBlocking {
+    server.enqueue(MockResponse().setResponseCode(404))
+
+    try {
+      service.voidBody().await()
+      fail()
+    } catch (e: HttpException) {
+      assertThat(e).hasMessageThat().isEqualTo("HTTP 404 Client Error")
+    }
+  }
+
+  @Test fun voidBodyFailure() = runBlocking {
+    server.enqueue(MockResponse().setSocketPolicy(DISCONNECT_AFTER_REQUEST))
+
+    try {
+      service.voidBody().await()
+      fail()
+    } catch (e: IOException) {
+    }
+  }
+
   @Test fun responseSuccess200() = runBlocking {
     server.enqueue(MockResponse().setBody("Hi"))
 
@@ -102,6 +133,36 @@ class DeferredTest {
     server.enqueue(MockResponse().setSocketPolicy(DISCONNECT_AFTER_REQUEST))
 
     val deferred = service.response()
+    try {
+      deferred.await()
+      fail()
+    } catch (e: IOException) {
+    }
+  }
+
+  @Test fun voidResponseSuccess200() = runBlocking {
+    server.enqueue(MockResponse())
+
+    val deferred = service.voidResponse()
+    val response = deferred.await()
+    assertThat(response.isSuccessful).isTrue()
+    assertNull(response.body())
+  }
+
+  @Test fun voidResponseSuccess404() = runBlocking {
+    server.enqueue(MockResponse().setResponseCode(404))
+
+    val deferred = service.voidResponse()
+    val response = deferred.await()
+    assertThat(response.isSuccessful).isFalse()
+    assertThat(response.errorBody()!!.string().isEmpty())
+    Unit
+  }
+
+  @Test fun voidResponseFailure() = runBlocking {
+    server.enqueue(MockResponse().setSocketPolicy(DISCONNECT_AFTER_REQUEST))
+
+    val deferred = service.voidResponse()
     try {
       deferred.await()
       fail()

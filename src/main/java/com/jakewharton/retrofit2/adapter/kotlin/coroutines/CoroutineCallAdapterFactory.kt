@@ -79,12 +79,12 @@ class CoroutineCallAdapterFactory private constructor() : CallAdapter.Factory() 
 
   private class BodyCallAdapter<T>(
       private val responseType: Type
-  ) : CallAdapter<T, Deferred<T>> {
+  ) : CallAdapter<T, Deferred<T?>> {
 
     override fun responseType() = responseType
 
-    override fun adapt(call: Call<T>): Deferred<T> {
-      val deferred = CompletableDeferred<T>()
+    override fun adapt(call: Call<T>): Deferred<T?> {
+      val deferred = CompletableDeferred<T?>()
 
       deferred.invokeOnCompletion {
         if (deferred.isCancelled) {
@@ -99,7 +99,7 @@ class CoroutineCallAdapterFactory private constructor() : CallAdapter.Factory() 
 
         override fun onResponse(call: Call<T>, response: Response<T>) {
           if (response.isSuccessful) {
-            deferred.complete(response.body()!!)
+            deferred.complete(response.body())
           } else {
             deferred.completeExceptionally(HttpException(response))
           }
