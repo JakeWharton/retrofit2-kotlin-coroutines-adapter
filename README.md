@@ -11,7 +11,7 @@ Add `CoroutineCallAdapterFactory` as a `Call` adapter when building your `Retrof
 ```kotlin
 val retrofit = Retrofit.Builder()
     .baseUrl("https://example.com/")
-    .addCallAdapterFactory(CoroutineCallAdapterFactory())
+    .addCallAdapterFactory(CoroutineCallAdapterFactory.create())
     .build()
 ```
 
