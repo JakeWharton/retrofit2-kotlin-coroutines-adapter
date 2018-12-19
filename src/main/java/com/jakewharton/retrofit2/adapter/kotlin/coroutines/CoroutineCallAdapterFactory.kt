@@ -15,6 +15,7 @@
  */
 package com.jakewharton.retrofit2.adapter.kotlin.coroutines
 
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import retrofit2.Call
@@ -87,7 +88,12 @@ class CoroutineCallAdapterFactory private constructor() : CallAdapter.Factory() 
       val deferred = CompletableDeferred<T>()
 
       deferred.invokeOnCompletion {
-        if (deferred.isCancelled) {
+        /**
+         * The [call] should not be marked as cancelled when it completes exceptionally.
+         * If the cause of cancellation is [CancellationException], then the [CompletableDeferred] is
+         * considered to be _cancelled normally_.
+         */
+        if (deferred.isCancelled && it is CancellationException) {
           call.cancel()
         }
       }
@@ -120,7 +126,12 @@ class CoroutineCallAdapterFactory private constructor() : CallAdapter.Factory() 
       val deferred = CompletableDeferred<Response<T>>()
 
       deferred.invokeOnCompletion {
-        if (deferred.isCancelled) {
+        /**
+         * The [call] should not be marked as cancelled when it completes exceptionally.
+         * If the cause of cancellation is [CancellationException], then the [CompletableDeferred] is
+         * considered to be _cancelled normally_.
+         */
+        if (deferred.isCancelled && it is CancellationException) {
           call.cancel()
         }
       }
