@@ -4,7 +4,7 @@ buildscript {
     maven { url 'http://dl.bintray.com/kotlin/kotlin-eap' }
   }
   dependencies {
-    classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.0-rc-57'
+    classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.31'
   }
 }
 
@@ -23,7 +23,7 @@ repositories {
 
 dependencies {
   api 'com.squareup.retrofit2:retrofit:2.4.0'
-  api 'org.jetbrains.kotlin:kotlin-stdlib:1.3.0-rc-57'
+  api 'org.jetbrains.kotlin:kotlin-stdlib:1.3.31'
   api 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.26.1-eap13'
 
   testImplementation 'junit:junit:4.12'
