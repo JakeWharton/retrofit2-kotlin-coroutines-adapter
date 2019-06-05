@@ -1,7 +1,9 @@
-Kotlin Coroutine Adapter
+Kotlin Coroutine Adapter (DEPRECATED)
 ========================
 
 A Retrofit 2 `CallAdapter.Factory` for [Kotlin coroutine's][1] `Deferred`.
+
+This library is deprecated. Please migrate to Retrofit 2.6.0 or newer and its [built-in `suspend` support](https://github.com/square/retrofit/blob/master/CHANGELOG.md#version-260-2019-06-05)
 
 
 Usage
